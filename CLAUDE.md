@@ -8,8 +8,8 @@ primer minuto.
 
 ## 1. Qué es este proyecto y quién lo usa
 
-*(Lo escribes tú en la sesión: dos líneas. Qué es la página, para quién es y cada
-cuándo se usa.)*
+Es un buzón de sugerencias para la cena de fin de año del equipo. Lo uso yo y
+todo mi equipo.
 
 ## 2. De dónde sale cada cifra
 
@@ -40,8 +40,8 @@ sale de esa tabla o de lo que la persona escriba en el formulario.
 
 ## 5. Mi regla de verificación
 
-*(La escribes tú en la sesión: con qué frase cierras lo que entregas y qué tiene
-que ser cierto para que puedas publicarlo.)*
+Cierro lo que entrego con: "haz pull y despliegue". Antes de decirlo, tiene que
+ser cierto que hice pull de la rama y que el despliegue quedó hecho.
 
 ## 6. Cómo vuelvo a abrir esto
 
@@ -55,3 +55,8 @@ que ser cierto para que puedas publicarlo.)*
 > **Si la página deja de mostrar datos después de una semana sin usarla**, casi
 > siempre es que el proyecto gratuito de Supabase se pausó. Se despierta con el
 > botón **Resume project**.
+
+## 7. Sistema de diseño
+
+- Colores: negro, amarillo y azul marino.
+- Tipografía: Arial, 12px.
