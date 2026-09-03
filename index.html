@@ -139,7 +139,12 @@
 
     const SUPABASE_URL = "https://nyaxlmtrzfydmgynbwzd.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Dj28uSgI_xqB0cICa7Tr7g_jVylICk-";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let cliente = null;
+    try {
+      cliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } catch (e) {
+      console.error("No se pudo iniciar el cliente de Supabase:", e);
+    }
 
     const CLAVE_VOTOS = "cena_votos_emitidos";
     function votosEmitidos() {
@@ -160,10 +165,21 @@
 
     async function cargarPropuestas() {
       const contenedor = document.getElementById("lista-propuestas");
-      const { data: propuestas, error } = await supabase
-        .from("propuestas_cena")
-        .select("id, lugar, persona, justificacion, created_at")
-        .order("created_at", { ascending: true });
+      if (!cliente) {
+        contenedor.innerHTML = '<p class="vacio">No se pudo conectar con la base de datos. Recarga la página.</p>';
+        return;
+      }
+
+      let propuestas, error;
+      try {
+        ({ data: propuestas, error } = await cliente
+          .from("propuestas_cena")
+          .select("id, lugar, persona, justificacion, created_at")
+          .order("created_at", { ascending: true }));
+      } catch (e) {
+        console.error("Error al cargar propuestas:", e);
+        error = e;
+      }
 
       if (error) {
         contenedor.innerHTML = '<p class="vacio">No se pudieron cargar las propuestas todavía.</p>';
@@ -174,9 +190,15 @@
         return;
       }
 
-      const { data: votos, error: errorVotos } = await supabase
-        .from("votos_cena")
-        .select("propuesta_id");
+      let votos, errorVotos;
+      try {
+        ({ data: votos, error: errorVotos } = await cliente
+          .from("votos_cena")
+          .select("propuesta_id"));
+      } catch (e) {
+        console.error("Error al cargar votos:", e);
+        errorVotos = e;
+      }
 
       const conteos = {};
       if (!errorVotos && votos) {
@@ -207,15 +229,21 @@
 
       contenedor.querySelectorAll(".btn-votar").forEach((boton) => {
         boton.addEventListener("click", async () => {
+          if (!cliente) return;
           const id = Number(boton.dataset.id);
           boton.disabled = true;
-          const { error: errorVoto } = await supabase
-            .from("votos_cena")
-            .insert({ propuesta_id: id });
-          if (!errorVoto) {
-            marcarVotado(id);
-            cargarPropuestas();
-          } else {
+          try {
+            const { error: errorVoto } = await cliente
+              .from("votos_cena")
+              .insert({ propuesta_id: id });
+            if (!errorVoto) {
+              marcarVotado(id);
+              cargarPropuestas();
+            } else {
+              boton.disabled = false;
+            }
+          } catch (e) {
+            console.error("Error al votar:", e);
             boton.disabled = false;
           }
         });
@@ -227,26 +255,39 @@
       const form = evento.target;
       const boton = form.querySelector(".btn-enviar");
       const estado = document.getElementById("estado-form");
-      boton.disabled = true;
       estado.textContent = "";
       estado.className = "mensaje-estado";
 
-      const { error } = await supabase.from("propuestas_cena").insert({
-        lugar: form.lugar.value.trim(),
-        persona: form.persona.value.trim(),
-        justificacion: form.justificacion.value.trim(),
-      });
+      if (!cliente) {
+        estado.textContent = "No se pudo conectar con la base de datos. Recarga la página.";
+        estado.className = "mensaje-estado error";
+        return;
+      }
 
-      boton.disabled = false;
-      if (error) {
+      boton.disabled = true;
+      try {
+        const { error } = await cliente.from("propuestas_cena").insert({
+          lugar: form.lugar.value.trim(),
+          persona: form.persona.value.trim(),
+          justificacion: form.justificacion.value.trim(),
+        });
+
+        if (error) {
+          console.error("Error al enviar propuesta:", error);
+          estado.textContent = "Algo falló, intenta de nuevo.";
+          estado.className = "mensaje-estado error";
+        } else {
+          estado.textContent = "¡Gracias! Tu propuesta ya quedó registrada.";
+          estado.className = "mensaje-estado ok";
+          form.reset();
+          cargarPropuestas();
+        }
+      } catch (e) {
+        console.error("Error al enviar propuesta:", e);
         estado.textContent = "Algo falló, intenta de nuevo.";
         estado.className = "mensaje-estado error";
-      } else {
-        estado.textContent = "¡Gracias! Tu propuesta ya quedó registrada.";
-        estado.className = "mensaje-estado ok";
-        form.reset();
-        cargarPropuestas();
       }
+      boton.disabled = false;
     });
 
     cargarPropuestas();
