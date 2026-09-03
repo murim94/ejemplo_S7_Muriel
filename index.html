@@ -126,8 +126,17 @@
     </section>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("activa"));
+        document.querySelectorAll(".vista").forEach((v) => v.classList.remove("activa"));
+        tab.classList.add("activa");
+        document.getElementById("vista-" + tab.dataset.vista).classList.add("activa");
+      });
+    });
+
     const SUPABASE_URL = "https://nyaxlmtrzfydmgynbwzd.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Dj28uSgI_xqB0cICa7Tr7g_jVylICk-";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -212,15 +221,6 @@
         });
       });
     }
-
-    document.querySelectorAll(".tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("activa"));
-        document.querySelectorAll(".vista").forEach((v) => v.classList.remove("activa"));
-        tab.classList.add("activa");
-        document.getElementById("vista-" + tab.dataset.vista).classList.add("activa");
-      });
-    });
 
     document.getElementById("form-propuesta").addEventListener("submit", async (evento) => {
       evento.preventDefault();
