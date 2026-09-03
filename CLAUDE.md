@@ -45,9 +45,11 @@ que ser cierto para que puedas publicarlo.)*
 
 ## 6. Cómo vuelvo a abrir esto
 
-- El proyecto vive en este repositorio de GitHub.
+- El proyecto vive en este repositorio de GitHub: `murim94/ejemplo_S7_Muriel`.
 - Se abre pidiéndole a Claude una sesión sobre este repo; no hace falta descargarlo.
-- La página publicada está en la liga que da Netlify.
+- La página publicada está en https://ejemplo-s7-muriel.netlify.app
+- El sitio en Netlify se llama `ejemplo-s7-muriel` y está conectado por Git a la
+  rama `main` de este repositorio: fusionar a `main` publica solo.
 - La base de datos está en supabase.com, en el proyecto de esta cuenta.
 
 > **Si la página deja de mostrar datos después de una semana sin usarla**, casi
